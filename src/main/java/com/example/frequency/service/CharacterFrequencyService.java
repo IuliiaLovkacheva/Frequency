@@ -8,7 +8,7 @@ import java.util.*;
 @Service
 public class CharacterFrequencyService {
     private static final int MAX_STRING_LENGTH = 7000;
-    public HashMap<Character, Integer> calculateFrequency(String string) {
+    public LinkedHashMap<Character, Integer> calculateFrequency(String string) {
         if (string.length() > MAX_STRING_LENGTH) {
             throw new InputLengthException();
         }
