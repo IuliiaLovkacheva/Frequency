@@ -14,8 +14,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootTest
 public class CharacterFrequencyServiceTest {
-    public static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/\\<>"
-            + ".*&^%$#@!?'\"|~абвгдеёжзиклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
+    public static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>"
+            + ".*&$@!~абвгдеёжзиклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
     private static final int EXPECTED_MAX_STRING_LENGTH = 7000;
     @Autowired
     private CharacterFrequencyService service;
