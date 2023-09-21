@@ -15,8 +15,6 @@ public class CharacterFrequencyController {
         this.service = service;
     }
 
-    // TODO possibly use big decimal?
-    // TODO test a string with lengths Integer.MAX_VALUE and I.M_V+1
     @GetMapping("/frequency/{string}")
     HashMap<Character, Integer> calculateFrequency(@PathVariable String string) {
         return service.calculateFrequency(string);

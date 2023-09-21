@@ -84,7 +84,6 @@ public class CharacterFrequencyServiceTest {
         twoCharacterSuccessTestForTotal(EXPECTED_MAX_STRING_LENGTH);
     }
 
-
     @Test
     void multipleCharacters_DifferentFrequencies() {
         StringBuilder builder = new StringBuilder();
@@ -165,31 +164,42 @@ public class CharacterFrequencyServiceTest {
     }
 
     private void singleCharacterSuccessTest(int repeatNumber) {
-        String inputString = "a".repeat(repeatNumber);
+        Character ch = getRandomCharacter();
+        StringBuilder builder = new StringBuilder();
+        appendNTimes(builder, repeatNumber, ch);
+        String inputString = builder.toString();
         Set<Character> set = new HashSet<>();
-        set.add('a');
+        set.add(ch);
 
         HashMap<Character, Integer> map = service.calculateFrequency(inputString);
 
         assertEquals(set, map.keySet());
-        assertEquals(repeatNumber, map.get('a'));
+        assertEquals(repeatNumber, map.get(ch));
     }
 
     private void twoCharactersSuccessTest(int repeatNumber1, int repeatNumber2) {
         Set<Character> set = new HashSet<>();
-        String characters = "ab";
-        for (char ch : characters.toCharArray()) {
-            set.add(ch);
+        Character ch1 = getRandomCharacter();
+        Character ch2 = getRandomCharacter();
+        while (ch2.equals(ch1)) {
+            ch2 = getRandomCharacter();
         }
+        set.add(ch1);
+        set.add(ch2);
         StringBuilder builder = new StringBuilder();
-        appendNTimes(builder, repeatNumber1, characters.charAt(0));
-        appendNTimes(builder, repeatNumber2, characters.charAt(1));
+        appendNTimes(builder, repeatNumber1, ch1);
+        appendNTimes(builder, repeatNumber2, ch2);
 
         HashMap<Character, Integer> map = service.calculateFrequency(shuffleString(builder.toString()));
 
         assertEquals(set, map.keySet());
-        assertEquals(repeatNumber1, map.get('a'));
-        assertEquals(repeatNumber2, map.get('b'));
+        assertDescending(map.values().stream().toList());
+        assertEquals(repeatNumber1, map.get(ch1));
+        assertEquals(repeatNumber2, map.get(ch2));
+    }
+
+    private static char getRandomCharacter() {
+        return CHARACTER_SOURCE.charAt(ThreadLocalRandom.current().nextInt(0, CHARACTER_SOURCE.length()));
     }
 
     private void twoCharacterSuccessTestForTotal(int total) {
