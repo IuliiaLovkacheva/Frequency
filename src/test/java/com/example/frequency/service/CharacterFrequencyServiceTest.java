@@ -20,74 +20,73 @@ public class CharacterFrequencyServiceTest {
 
     @Test
     void singleCharacter_SingleOccurrence() {
-        HashMap<Character, Integer> map = service.calculateFrequency("a");
-        Set<Character> set = new HashSet<>();
-        set.add('a');
-        assertEquals(set, map.keySet());
-        assertEquals(1, map.get('a'));
+        singleCharacterSuccessTest(1);
     }
 
     @Test
-    void singleCharacter_TwoTimes() {
-        HashMap<Character, Integer> map = service.calculateFrequency("aa");
-        Set<Character> set = new HashSet<>();
-        set.add('a');
-        assertEquals(set, map.keySet());
-        assertEquals(2, map.get('a'));
+    void singleCharacter_TwoOccurrences() {
+        singleCharacterSuccessTest(2);
     }
 
     @Test
-    void singleCharacter_ManyTimes() {
+    void singleCharacter_ManyOccurrences() {
         int randomNum = ThreadLocalRandom.current().nextInt(3, EXPECTED_MAX_STRING_LENGTH - 1);
-        String inputString = "a".repeat(randomNum);
-        Set<Character> set = new HashSet<>();
-        set.add('a');
-
-        HashMap<Character, Integer> map = service.calculateFrequency(inputString);
-
-        assertEquals(set, map.keySet());
-        assertEquals(randomNum, map.get('a'));
+        singleCharacterSuccessTest(randomNum);
     }
 
     @Test
     void singleCharacter_MaxStringLengthMinusOne() {
-        String inputString = "a".repeat(EXPECTED_MAX_STRING_LENGTH - 1);
-        Set<Character> set = new HashSet<>();
-        set.add('a');
-
-        HashMap<Character, Integer> map = service.calculateFrequency(inputString);
-
-        assertEquals(set, map.keySet());
-        assertEquals(EXPECTED_MAX_STRING_LENGTH - 1, map.get('a'));
+        singleCharacterSuccessTest(EXPECTED_MAX_STRING_LENGTH - 1);
     }
 
     @Test
     void singleCharacter_MaxStringLength() {
-        String inputString = "a".repeat(EXPECTED_MAX_STRING_LENGTH);
-        Set<Character> set = new HashSet<>();
-        set.add('a');
-
-        HashMap<Character, Integer> map = service.calculateFrequency(inputString);
-
-        assertEquals(set, map.keySet());
-        assertEquals(EXPECTED_MAX_STRING_LENGTH, map.get('a'));
+        singleCharacterSuccessTest(EXPECTED_MAX_STRING_LENGTH);
     }
 
     @Test
-    void singleCharacter_exceedMaxLengthByOne() {
+    void exceedMaxLengthByOne() {
         String inputString = "a".repeat(EXPECTED_MAX_STRING_LENGTH + 1);
         assertThrows(InputLengthException.class, () -> service.calculateFrequency(inputString));
     }
 
     @Test
-    void singleCharacter_exceedMaxLength() {
+    void exceedMaxLength() {
         int randomNum = ThreadLocalRandom.current().nextInt(2, 100);
         String inputString = "a".repeat(EXPECTED_MAX_STRING_LENGTH + randomNum);
         assertThrows(InputLengthException.class, () -> service.calculateFrequency(inputString));
     }
 
     @Test
-    void variousCharacters_DifferentFrequencies() {
+    void twoCharacters_SingleOccurrences() {
+        twoCharactersSuccessTest(1, 1);
+    }
+
+    @Test
+    void twoCharacters_TwoOccurrences() {
+        twoCharactersSuccessTest(1, 2);
+        twoCharactersSuccessTest(2, 2);
+    }
+
+    @Test
+    void twoCharacters_ManyOccurrences() {
+        int total = ThreadLocalRandom.current().nextInt(4, EXPECTED_MAX_STRING_LENGTH - 1);
+        twoCharacterSuccessTestForTotal(total);
+    }
+
+    @Test
+    void twoCharacters_MaxStringLengthMinusOne() {
+        twoCharacterSuccessTestForTotal(EXPECTED_MAX_STRING_LENGTH - 1);
+    }
+
+    @Test
+    void twoCharacters_MaxStringLength() {
+        twoCharacterSuccessTestForTotal(EXPECTED_MAX_STRING_LENGTH);
+    }
+
+
+    @Test
+    void multipleCharacters_DifferentFrequencies() {
         StringBuilder builder = new StringBuilder();
         Set<Character> set = new HashSet<>();
         for (int i = 0; i < CHARACTER_SOURCE.length(); ++i) {
@@ -157,11 +156,46 @@ public class CharacterFrequencyServiceTest {
     private static String shuffleString(String string) {
         List<String> characters = Arrays.asList(string.split(""));
         Collections.shuffle(characters);
-        String afterShuffle = "";
+        StringBuilder afterShuffle = new StringBuilder();
         for (String character : characters)
         {
-            afterShuffle += character;
+            afterShuffle.append(character);
         }
-        return afterShuffle;
+        return afterShuffle.toString();
+    }
+
+    private void singleCharacterSuccessTest(int repeatNumber) {
+        String inputString = "a".repeat(repeatNumber);
+        Set<Character> set = new HashSet<>();
+        set.add('a');
+
+        HashMap<Character, Integer> map = service.calculateFrequency(inputString);
+
+        assertEquals(set, map.keySet());
+        assertEquals(repeatNumber, map.get('a'));
+    }
+
+    private void twoCharactersSuccessTest(int repeatNumber1, int repeatNumber2) {
+        Set<Character> set = new HashSet<>();
+        String characters = "ab";
+        for (char ch : characters.toCharArray()) {
+            set.add(ch);
+        }
+        StringBuilder builder = new StringBuilder();
+        appendNTimes(builder, repeatNumber1, characters.charAt(0));
+        appendNTimes(builder, repeatNumber2, characters.charAt(1));
+
+        HashMap<Character, Integer> map = service.calculateFrequency(shuffleString(builder.toString()));
+
+        assertEquals(set, map.keySet());
+        assertEquals(repeatNumber1, map.get('a'));
+        assertEquals(repeatNumber2, map.get('b'));
+    }
+
+    private void twoCharacterSuccessTestForTotal(int total) {
+        twoCharactersSuccessTest(1, total - 1);
+        int repeatNumber1 = ThreadLocalRandom.current().nextInt(2, total - 1);
+        int repeatNumber2 = total - repeatNumber1;
+        twoCharactersSuccessTest(repeatNumber1, repeatNumber2);
     }
 }
