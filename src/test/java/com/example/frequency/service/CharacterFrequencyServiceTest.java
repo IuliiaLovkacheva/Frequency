@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootTest
 public class CharacterFrequencyServiceTest {
-    public static final String CHARACTER_SOURCE = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/\\<>"
+    public static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/\\<>"
             + ".*&^%$#@!?'\"|~абвгдеёжзиклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
     private static final int EXPECTED_MAX_STRING_LENGTH = 7000;
     @Autowired
@@ -117,7 +117,7 @@ public class CharacterFrequencyServiceTest {
         Set<Character> set = new HashSet<>();
         List<Integer> frequencies = new ArrayList<>();
         List<Character> charactersInOrder = new ArrayList<>();
-        int characterNumber = ThreadLocalRandom.current().nextInt(3, CHARACTER_SOURCE.length());
+        int characterNumber = ThreadLocalRandom.current().nextInt(3, CHARACTERS.length());
         int maxCharacterOccurrences = EXPECTED_MAX_STRING_LENGTH / characterNumber;
         int count = 0;
         int numberOfCharacters;
@@ -140,6 +140,12 @@ public class CharacterFrequencyServiceTest {
         for (int i = 0; i < characterNumber; ++i) {
             assertEquals(map.get(charactersInOrder.get(i)), frequencies.get(i));
         }
+    }
+
+    @Test
+    void multipleCharacters_mixedFrequencies() {
+        int total = ThreadLocalRandom.current().nextInt(4, EXPECTED_MAX_STRING_LENGTH - 1);
+        multipleCharacterSuccessTest(total);
     }
 
     @ParameterizedTest
@@ -230,7 +236,7 @@ public class CharacterFrequencyServiceTest {
     }
 
     private static char getRandomCharacter() {
-        return CHARACTER_SOURCE.charAt(ThreadLocalRandom.current().nextInt(0, CHARACTER_SOURCE.length()));
+        return CHARACTERS.charAt(ThreadLocalRandom.current().nextInt(0, CHARACTERS.length()));
     }
 
     private void twoCharacterSuccessTestForTotal(int total) {
